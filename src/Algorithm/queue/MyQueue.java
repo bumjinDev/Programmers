@@ -1,14 +1,5 @@
 package Algorithm.queue;
 
-/* 원형 큐 로직 구현. 
- * push: near 인덱스의 다음 위치에 데이터를 추가하고 near 인덱스를 증가시킵니다. 또한, 'isFull' 메소드를 먼저 호출하여 여유 공간이 있는지 확인합니다.
- * pop: front 인덱스의 다음 위치에 있는 데이터를 확인하여 존재할 경우 데이터를 출력하고 front 인덱스를 증가시킵니다. 또한, 'isEmpty' 메소드를 먼저 호출하여 비어 있지 않은지 확인합니다.
- * pick: front 인덱스의 다음 위치에 있는 데이터를 확인하여 존재할 경우 데이터를 출력만 합니다. 또한, 'isEmpty' 메소드를 먼저 호출하여 비어 있지 않은지 확인합니다.
- * resize: 'push' 메소드 실행 중 'isFull' 메소드 실행 시 가득 찼다고 확인되면, Array.copyOf(현재 배열, 새 배열 크기)를 사용하여 배열 크기를 증가시킵니다.
- * search: 함수 호출 시 주어진 값에 해당하는 데이터가 있는지 front부터 near까지 순차적으로 탐색하여 지정된 값을 찾습니다. 값이 없을 경우 -1을 반환합니다.
- * isEmpty: front 인덱스부터 near 인덱스까지의 거리를 계산하고, 계산된 거리 내에서 데이터를 반복 탐색하여 데이터가 없으면 1을 반환합니다.
- * isFull: front부터 near까지의 거리가 전체 크기 -2이고 near에 데이터가 있으면 가득 찬 상태로 간주합니다. 그렇지 않으면 비어 있지 않음을 출력합니다.
- */
 public class MyQueue<E> {
 
 	/* 
@@ -74,6 +65,7 @@ public class MyQueue<E> {
 		boolean resBool = false;
 		
 		if (front < near) {
+			System.out.println("near : " + near + ", front : " + front);
 			if(near - front == 1 && queue[near] == null)
 				resBool = true;
 			
@@ -99,7 +91,7 @@ public class MyQueue<E> {
 			
 			E[] queueTemp = (E[]) new Object[queue.length * 2];
 			
-			int i = 0;	// 실제 데이터가 들어가는 인덱스는 near 부터..
+			int i = -1;	// 실제 데이터가 들어가는 인덱스는 near 부터..
 			
 			if(front < near) {
 				for(Object obj : queue) {	
@@ -114,16 +106,16 @@ public class MyQueue<E> {
 				/* front 부터 queue 의 마지막 인덱스 까지 복사하여 새로운 배열 내 저장. */
 				for(int j = front; j <= queue.length - 1; j ++) {
 			
+					i ++;
 					queueTemp[i] = (E)queue[j];
 					System.out.println("'(E)queue[j]' : " + (E)queue[j] + ", i : " + i + ", j : " + j);
-					i ++;
 				}
 				
 				System.out.println("두번째 정렬 - near : " + near + ", front : " + front);
 				/* near 부터 시작해서 front - 1 위치까지 새로운 배열 내 저장. */
 				for(int j = 0; j < front; j++) {
-					queueTemp[i] = (E)queue[j];
 					i++;
+					queueTemp[i] = (E)queue[j];
 //					System.out.println("");
 				}
 			}
@@ -214,6 +206,7 @@ public class MyQueue<E> {
 		return queue;
 	}
 	
+	/* isEmpty 의 결과로 비어 있지 않다면 실행. */
 	public Object pop() {
 		
 		System.out.println("pop() 실행!");
@@ -223,16 +216,45 @@ public class MyQueue<E> {
 		System.out.println("현재 인덱스 - front : " + front +", near : " + near);
 		if(bool) {
 			System.out.println("비어 있으므로 뺄 수 없습니다.!\n");
+			/* 원형 큐의 pop() 메소드에서 인덱스를 확인하는 순서는 다음과 같다.
+			 * 
+			 * 1. front < near: near은 현재 원형 큐 배열의 끝 인덱스 범위 이내에 있으므로 이를 고려하여 인덱스를 조정.
+			 *    - if ((front + 1) == near): front가 near 바로 직전에 있다는 의미이므로 near 인덱스의 값을 null로 치환하고 front 는 별도의 인덱스 변환 없음
+			 *    - if ((front + 1) < near): front + 1을 하여도 해당 인덱스가 near보다 최소 한 칸 전이므로 해당 인덱스로 front를 치환하고 해당 인덱스의 값을 null로 치환.
+			 * 
+			 * 2. near < front: 원형 큐로 동작하여 값을 채워 넣을 때 마지막 인덱스 범위를 넘어 초기 0번부터 다시 채워 나갔다는 의미이므로 1번과는 다른 pop() 메소드 로직이 필요.
+			 *    - if ((front + 1) <= queue.length - 1): front 인덱스 값을 +1 후 해당 위치의 값을 null로 치환.
+			 *    - if ((front + 1) > queue.length - 1 ): front 인덱스를 0번으로 옮긴 후 null로 처리합니다. 만약 near가 0인 경우 near 인덱스의 값을 null로 처리하는 로직을 하위 if 문에 적용.
+			 *       - if (0 == near): near 인덱스의 값을 null로 치환 후 front는 그대로 둔다.
+			 *       - if (0 < near): queue 배열의 0번 인덱스를 front 인덱스로 치환.
+			 */
 		} else {
-			if((front + 1) == near) {
-				System.out.println("pop() - '(front + 1) >= near', " + "(front + 1) : " + (front + 1) + ", near : " + near);
-				queue[near] = null;
-			} else if((front + 1) >= queue.length - 1) {
-				front = 0;
-				queue[front] = null;
-			} else {
-				front += 1;
-				queue[front] = null;
+			
+			if(front < near) {
+				if ((front + 1) == near)
+					queue[near] = null;
+				
+				if ((front + 1) < near) {
+					
+					front += 1;
+					queue[front] = null;
+				}
+				
+			} else if(near < front) {
+				
+				if ((front + 1) <= queue.length - 1) {
+					front += 1;
+					queue[front] = null;
+				}
+				
+				if((front + 1) > queue.length - 1) {
+					if(0 == near)
+						queue[near] = null;
+					if(0 < near) {
+						front = 0;
+						queue[front] = null;
+					}
+				}
 			}
 		}
 		
@@ -302,7 +324,7 @@ public class MyQueue<E> {
 		myQueue.pop();
 		System.out.println(myQueue.toString() + ", front : " + myQueue.front + ", near : " + myQueue.near + "\n");
 		myQueue.resize();
-		System.out.println("resize() 이" + myQueue.toString() + ", front : " + myQueue.front + ", near : " + myQueue.near + "\n");
+		System.out.println("resize() : " + myQueue.toString() + ", front : " + myQueue.front + ", near : " + myQueue.near + "\n");
 		myQueue.pop();
 		System.out.println(myQueue.toString() + ", front : " + myQueue.front + ", near : " + myQueue.near + "\n");
 		myQueue.pop();
