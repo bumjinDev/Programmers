@@ -50,9 +50,6 @@ public class BstTree {
 			
 		} else if(addNode.data == rootNode.data)		// 동일한 값이라면 추가로 저장하지 않고 반환.
 			return;
-			
-		
-		return;	
 	}
 	
 	/* 노드 pop 메소드 : 'data' 입력 받아 해당 데이터와 일치하는 데이터를 가진 Node 를 찾 제거하고 없으면 단순 null 반환, 찾는 알고리즘은 전위 탐색, 중위 탐색, 후위 탐색 중 하나를 택해서 찾는다. */
@@ -73,24 +70,58 @@ public class BstTree {
 	*/
 	public static Node preorderTraversal(int data, Node rootNode) {
 		
-		if(rootNode != null)
-			System.out.println("현재 노드 데이터 : " + rootNode.data + ", 주어진 탐색 데이터 : " + data);
-		
 		if(rootNode == null)
 			return null;
-		
-		if(rootNode.data == data)
-			return rootNode;
 			
-		Node node = preorderTraversal(data, rootNode.leftNode);
-			
-		if(node != null)
-			return rootNode.leftNode;
-		
-		return preorderTraversal(data, rootNode.rightNode);
+		if (data == rootNode.data) {
+	        return rootNode;
+	    }
+
+	    Node leftResult = preorderTraversal(data, rootNode.leftNode);
+	    if (leftResult != null) {
+	        return leftResult;
+	    }
+
+	    return preorderTraversal(data, rootNode.rightNode);
 	}	
 	
 	/* 중위 탐색 메소드 */
+	public static Node inOrderTraversal(int data, Node rootNode) {
+		
+		
+		System.out.println("inOrderTraversal() 실행!");
+		System.out.println("rootNode : " + rootNode.data);
+		
+		/* 다음 것이 존재한다면 없는 지점, 즉 마지막 왼쪽 노드를 찾을 때 까지 재귀적으로 재 호출한다. */
+		if(rootNode.leftNode != null) {
+			inOrderTraversal(data, rootNode.leftNode);
+		}
+		/* 마지막 왼쪽 노드인 마지막 서브트리로서 기능하는 루트 노드를 찾으면 분기하는 지점,
+		 * !! 만약 현재 노드 내 데이터가 탐색 조건으로 주어진 'data' 와 동일한 노드를 찾았으면 그 다음 별도의 로직은 적용하지 않고. 지금까지 호출한 재귀 함수 스택을 없애면서 복귀를 한다.
+		 *
+		 **/
+		System.out.println();
+		System.out.println("디버깅 - data : " + data + ", rootNode.data : " + rootNode.data);
+		
+		if(rootNode.data == data) {
+			
+			return rootNode;
+			
+		} else {	/* !! 마지막 레벨의 가장 왼쪽 노드에서조차 값 못 찾았을 경우에는 오른쪽 Node 가 있는지 확인한다. 만약에 존재한다면 해당 시점부터 왼쪽을 다시 탐색하는 것을 실행하기 위해서 현재 함수의 재귀적 호출을 재 실행하여 또 다시 마지막 왼쪽 노드에 닿을 때 까지,
+					즉 'if(rootNode.leftNode != null)' 이걸 실행 완료하는 것을 유도한다, 또한 중요한 점은 아래 else 문은 마지막 왼쪽 노드에서 우측 노드 탐색 결과로 null 이 나오면 단순 현재 재귀 함수 호출을 종료하기 위한 목적으로만 null을 반환할 것이고
+					이에 따라 이전 순차대로 실행된 재귀 함수 복귀 지점은 'return inOrderTraversal(data, rootNode.leftNode);' 이고 그러므로 이어서 복귀된 함수들이 재 실행하는 지점은 'if(rootNode.data == data)' 여기가 되므로(이 구문 확인하는
+					것 자체가 성능 낭비긴 하다.) 각 복귀 할 때마다 'if(inOrderTraversal(data, rootNode.rightNode) != null)	' 이 코드가 동일하게 실행되므로 각 노드별로 공통적으로 우측 노드가 존재하는지에 따라 분기 실행되도록 유도한다.
+					결과적으로 루트 노드에 도달했을 시 자연스럽게 루트 노드 또한 우측 노드를 확인함으로써 탐색을 한다. */
+			if(rootNode.rightNode != null) {
+				
+				System.out.println("디버깅 - 우측 노드 존재 확인 ! " + rootNode.rightNode.data);
+				return inOrderTraversal(data, rootNode.rightNode);
+				
+			} else
+				return null;
+		}
+	}
+	
 	
 	/* 후위 탐색 메소드 */
 	
@@ -100,15 +131,23 @@ public class BstTree {
 	
 		/* root 노드 생성, 해당 노드로부터 Tree 구성 */
 		Node rootNode = new Node(rand.nextInt(11) + 50); // 50에서 60 사이의 랜덤 값 생성);
+		System.out.println("rootNode 값 : " + rootNode.data + "\n");
 		
+		/* 첫번째 노드 삽입 */
 		Node firstNode = new Node(10);
 		BstTree.addTree(firstNode, rootNode);
 		
-		Node result = BstTree.preorderTraversal(10, rootNode);
-		System.out.println("result : " + result);
+		Node result = BstTree.preorderTraversal(firstNode.data, rootNode);
+		System.out.println("result : " + result.data);
+		System.out.println("\n");
 		
+		Node secondNode = new Node(70);
+		BstTree.addTree(secondNode, rootNode);
 		
-		Node secondNode = new Node(20);
+		System.out.println("두번째 찾기 시작!");
+		Node result2 = BstTree.inOrderTraversal(secondNode.data, rootNode);
+		System.out.println("result2 : " + result2.data + ", secondNode : " + secondNode.data);
+		
 		Node thirdNode = new Node(70);
 		Node forthNode = new Node(80);
 	}
