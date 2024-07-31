@@ -73,32 +73,21 @@ public class BstTree {
 	*/
 	public static Node preorderTraversal(int data, Node rootNode) {
 		
-		if(data == rootNode.data)	// 현 서브 트리(각 루트 노드) 내 데이터가 탐색 기준으로 주어진 데이터와 일치하면 해당 데이터를 반환.
-			return rootNode;
+		if(rootNode != null)
+			System.out.println("현재 노드 데이터 : " + rootNode.data + ", 주어진 탐색 데이터 : " + data);
 		
-		else {	// 현재 노드(서브트리의 루트 노드)가 주어진 'data'와 일치하지 않는다면 왼쪽 방향으로 탐색 이어서 진행.
+		if(rootNode == null)
+			return null;
+		
+		if(rootNode.data == data)
+			return rootNode;
 			
-			if(rootNode.leftNode != null) {	// 현재 노드의 왼쪽 노드를 이어서 탐색할 때에 왼쪽노드가 존재할 시 이어서 탐색.
+		Node node = preorderTraversal(data, rootNode.leftNode);
 			
-				preorderTraversal(data, rootNode.leftNode);
-				
-			} else {	// 왼쪽 노드가 없다면 전위 탐색으로써 다음 순서인 우측 노드를 기준으로 탐색.
-				
-				if(rootNode.rightNode == null) {	// 만엑 우측 노드가 존재하지 않는다면 'data'에 해당하는 노드가 없다는 의미니 null return 한다.
-					
-					System.out.println("주어진 data와 일치하는 노드가 없으므로 null return!");
-					return null;
-				} else {	// 우측 노드가 'null' 아니라면 값을 확인하거나 해당 노드를 기준으로 재귀 호출.
-					
-					if(rootNode.rightNode.data == data) {	// 우측 노드 내 데이터가 존재하면서 'data' 또한 일치하면 해당 노드를 반한.
-						return rootNode.rightNode;
-					} else									// 우측 노드가 데이터가 일치하지는 않지만 왼쪽 노드가 null 이므로 우측 노드를 기준으로 재 탐색.
-						preorderTraversal(data, rootNode.rightNode);
-				}
-					
-			}
-		}
-		return null;
+		if(node != null)
+			return rootNode.leftNode;
+		
+		return preorderTraversal(data, rootNode.rightNode);
 	}	
 	
 	/* 중위 탐색 메소드 */
