@@ -1,4 +1,4 @@
-package Algorithm;
+package Algorithm.Tree;
 
 /* 트리 자료 구조 : 
 * 트리 자료구조는 시스템 또는 기능을 계층적인 관계로 나타내고 필요한 내용을 저장 및 관리하는 데 사용되는 자료구조이다.
@@ -26,9 +26,10 @@ package Algorithm;
 
 public class MyTree {
 
+	
+	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+		
+		
 	}
-
 }
