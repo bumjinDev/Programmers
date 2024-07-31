@@ -26,7 +26,26 @@ package Algorithm.Tree;
 
 public class MyTree {
 
+	/* 각 트리 내 노드 정의 */
+	class TreeNode {
+		
+		int data;
+		MyTree leftNode;
+		MyTree RightNode;
+		
+		// Node 생성자
+		
+	}
 	
+	/* 노드 add 메소드 */
+	
+	/* 노드 pop 메소드 */
+	
+	/* 전위 탐색 메소드 */
+	
+	/* 중위 탐색 메소드 */
+	
+	/* 후위 탐색 메소드 */
 	
 	public static void main(String[] args) {
 		
