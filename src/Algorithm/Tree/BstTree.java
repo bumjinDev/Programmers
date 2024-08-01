@@ -52,15 +52,6 @@ public class BstTree {
 			return;
 	}
 	
-	/* 노드 pop 메소드 : 'data' 입력 받아 해당 데이터와 일치하는 데이터를 가진 Node 를 찾 제거하고 없으면 단순 null 반환, 찾는 알고리즘은 전위 탐색, 중위 탐색, 후위 탐색 중 하나를 택해서 찾는다. */
-	public Node popTree(int data) {
-		
-		
-		
-		/* 탐색 알고리즘 실행해서 null 값 받으면 'data'를 가지고 있는 Node 가 없다는 것이고 반환 받으면 해당 노드를 pop 해도 된다는 의미. */
-		return new Node();
-	}
-	
 	
 	/* 전위 탐색 메소드(로직) : Node addNode, Node rootNode를 입력받아서 해당 'data'가 있는 지 확인.
 		1. 탐색 과정 중 모든 서브 트리의 루트 노드를 우선적으로 탐색하기 때문에 모든 탐색 과정 중 거쳐가는 서브트리별 루트노드는 찾을 때 마다 즉각적으로 데이터를 추출해 낸다.
