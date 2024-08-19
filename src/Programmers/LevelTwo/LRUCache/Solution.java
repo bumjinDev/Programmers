@@ -1,7 +1,6 @@
 package Programmers.LevelTwo.LRUCache;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 
@@ -68,44 +67,41 @@ public class Solution {
 	public static void lRuAlgorithm(ArrayList<String> cacheMemory, String city) {
 		
 		System.out.println("lRuAlgorithm() !" + ", 정렬 전 전체 캐시 : " + cacheMemory.toString());
-		
-		if(cacheMemory.size() >= 1)
-			cacheMemory.remove(0);
+	
 		cacheMemory.add(city);
+	    cacheMemory.remove(0);
 		
 		System.out.println("정렬 후 전체 캐시 : " + cacheMemory.toString() + "\n");
 	}
 	
-//	public static void main(String[] args) {
+	public static void main(String[] args) {
 		
-//        int[] cacheSizes = {0, 1, 2, 3, 4, 5};
-//        String[] cityNames = {
-//            "Jeju", "Pangyo", "Seoul", "NewYork", "LA", "SanFrancisco", "Rome", "Paris", "London", "Berlin",
-//            "Tokyo", "Osaka", "Beijing", "Shanghai", "Moscow", "Sydney", "Melbourne", "Dubai", "Mumbai", "Delhi",
-//            "Bangkok", "Singapore", "HongKong", "KualaLumpur", "Jakarta", "Istanbul", "Cairo", "MexicoCity", "Toronto", "Vancouver"
-//        };
-//        
-//        Random random = new Random();
-//        int cacheSize = cacheSizes[random.nextInt(cacheSizes.length)];
-//        String[] cities = new String[random.nextInt(18) + 1];
-//        
-//        for (int i = 0; i < 1; i++) {
-//            
-//            for (int j = 0; j < cities.length; j++) {
-//                cities[j] = cityNames[random.nextInt(cityNames.length)];
-//            }
-//            System.out.println(cacheSize + "\t" + java.util.Arrays.toString(cities));
-//        }
+        int[] cacheSizes = {0, 1, 2, 3, 4, 5};
+        String[] cityNames = {
+            "Jeju", "Pangyo", "Seoul", "NewYork", "LA", "SanFrancisco", "Rome", "Paris", "London", "Berlin",
+            "Tokyo", "Osaka", "Beijing", "Shanghai", "Moscow", "Sydney", "Melbourne", "Dubai", "Mumbai", "Delhi",
+            "Bangkok", "Singapore", "HongKong", "KualaLumpur", "Jakarta", "Istanbul", "Cairo", "MexicoCity", "Toronto", "Vancouver"
+        };
+        
+        Random random = new Random();
+        int cacheSize = cacheSizes[random.nextInt(cacheSizes.length)];
+        String[] cities = new String[random.nextInt(18) + 1];
+        
+        for (int i = 0; i < 1; i++) {
+            
+            for (int j = 0; j < cities.length; j++) {
+                cities[j] = cityNames[random.nextInt(cityNames.length)];
+            }
+            System.out.println(cacheSize + "\t" + java.util.Arrays.toString(cities));
+        }
 		
-//		// 6번째(마지막) 예시
+		// 6번째(마지막) 예시
 //		int cacheSize = 0;
 //		String cities[] = {"Jeju", "Pangyo", "Seoul", "NewYork", "LA"};
         
-//	    int answer = solution(4, cities);
-//	    System.out.println("결과 : " + answer);
+	    int answer = solution(4, cities);
+	    System.out.println("결과 : " + answer);
 		
-		// 예시 테스트 케이스
-//	}
-	
 
+	}
 }
