@@ -31,17 +31,10 @@ public class Solution {
         			intArrays[i] = temp;
         		}
         
-        
-        System.out.println("변환된 2차원 숫자 배열:");
-        for (int[] arr : intArrays) {
-            System.out.println(Arrays.toString(arr));
-        }
-       
+      
         /* 시작 지점 컬렉션 생성 */
         ArrayList<Integer> resArray = new ArrayList<>();
-//        for(int i = 0; i < intArrays[0].length; i++)
-//        	resArray.add(intArrays[0][i]);
-        
+
         /* 문제 풀이! */
         for(int [] arry : intArrays) {
         	for(int arryItem : arry) {
