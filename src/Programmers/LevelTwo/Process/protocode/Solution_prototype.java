@@ -1,4 +1,4 @@
-package Programmers.LevelTwo.Process.proto;
+package Programmers.LevelTwo.Process.protocode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
