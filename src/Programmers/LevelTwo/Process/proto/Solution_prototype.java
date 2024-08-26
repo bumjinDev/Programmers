@@ -1,9 +1,11 @@
-package Programmers.LevelTwo.Process;
+package Programmers.LevelTwo.Process.proto;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.util.HashSet;
 /* 프로그래머스 - level 2 : 스택/큐 > 프로세스 */
+import java.util.Set;
+
 /*
  * 풀이 로직:
  * 1. 'priorities' 배열 내 각 번호별 리스트를 저장합니다. (HashMap으로 관리)
@@ -20,15 +22,13 @@ class Node {
 	
 //	int sequences;		// 각 우선 순위 별로 생성되는 큐 내 각 노드가 들어온 순번.
 	boolean processTarget;
-	int processPriority;
-	
+
 	Node prev;	// 큐의 뒤쪽..데이터 입력 부분.
 	Node next;	// 큐의 앞쪽..데이터 출력 부분
 	
-	public Node(boolean processTarget, int processPriority){
+	public Node(boolean processTarget){
 		
 		this.processTarget = processTarget;
-		this.processPriority = processPriority;
 		
 		prev = null;
 		next = null;
@@ -36,19 +36,22 @@ class Node {
 }
 
 /* Node 를 가지고 queue 자료구조를 구현하는 클래스, 내부적으로 prev와 next 를 가진다. */
-class QueueNode {
+class queueNode {
 	
 	
 	Node near;	// 노드 뒤쪽
 	Node front;	// 노드 앞쪽
 	
+	int priority;	// 해당 큐의 우선순위를 표현한 것.
+	
 	Integer sequence;
 	
-	public QueueNode() {
+	public queueNode(int priority) {
 		
 		near = null;
 		front = null;
-	
+		
+		this.priority = priority;
 		this.sequence = new Integer(0);
 	}
 	
@@ -70,6 +73,7 @@ class QueueNode {
 			near.prev = node;	// 현재 near 노드의 뒷 링크를 새로운 node 에 연결.
 			near = node;		// 새롭게 queue 내 생성된 node 를 near 노드로 적용.
 		}
+		System.out.println();
 	}
 	
 	/* dequeue() : 단 방향 연결리스트에서 front 포인터의 노드 삭제. */
@@ -104,13 +108,13 @@ class QueueNode {
 	
 	public void showqueue() {
 	
-		System.out.println("showqueue()! \n");
+		System.out.println("showqueue() - properties : " + this.priority + " !\n");
 		
 		Node node = near;
 		
 		while(node != null) {
 			
-			System.out.println("node.processPriority : " + node.processPriority + ", node.processTarget : " + node.processTarget);
+			System.out.print(node.processTarget + " ");
 			node = node.next;
 		}
 		
@@ -118,12 +122,9 @@ class QueueNode {
 	}
 	
 	/* 현재 Queue 내 모든 프로세스 순차적으로 꺼내어 실행하면서 'sequence' 갱신한다. */	
-	public void processExecution(HashMap<Integer, Integer> processCount) {
+	public boolean processExecution() {
 		
 		System.out.println("processCheck() 실행!\n");
-		
-		ArrayList<Integer> prioritys = new ArrayList<Integer>();
-		boolean executionBool = true;
 		
 		while(true) {
 			
@@ -132,66 +133,44 @@ class QueueNode {
 			/* Node 가 더 이상 없는 경우 종료한다. */
 			if(node == null) {
 				System.out.println("현재 큐에 대해서 더 이상 노드가 없으므로 종료.");
+				return false;	// 종료될 때 까지 'Target' 에 해당하는 Node 가 안 나왓다는 건 해당 우선 순위 Queue 에서는 찾지 못 했다는 의미므로 'false' 반환.
 			}
-			/* 현재 'dequeue()' 메소드 통해 Node 하나를 꺼내온 상태에서 현재 노드보다 높은 우선 순위가 있는 노드가 있는지 확인하고 있다면 그냥 다시 enqueue 하기 */
-			for(int priority : processCount.keySet()) {
-				if(priority >= node.processPriority)
-					prioritys.add(priority);
-				if(priority > node.processPriority) {
-					executionBool = false;
-					this.enqueue(node);
-					break;
-				}
-			}
-			
-			System.out.println("디버깅 -  node.processPriority : " + node.processPriority + ", node.processTarget : " + node.processTarget + "\n");
-			
-			/* 현재 'node.processPriority' 보다 더 높은 것이 없다면 실행 */
-			if(executionBool) {
-				System.out.println("if(executionBool) 실행");
 				
-				/* 노드가 확인되는 경우 'sequence' 증가 및 해당 노드가 'Target' 여부 인지 확인 따라 반환 값 결정 */
-				this.sequence += 1;	
-				 if (!prioritys.isEmpty()) { // prioritys 리스트가 비어 있지 않은지 확인
-					/* 현재 프로세스 우선순위에 따른 남은 실행 프로세스 개수를 1 줄인다. */
-					processCount.put(prioritys.get(0), processCount.get(prioritys.get(0)) - 1);
-					
-					/* 현재 실행한 우선순위에 해당하는 프로세스 리스트를 1 줄였을 때 0으로 되었다면 리스트 아에 삭제. */
-					if(processCount.get(prioritys.get(0)) == 0)
-						processCount.remove(prioritys.get(0));
-					
-					if(node.processTarget == true)
-						return;
-				 }
-			}
+			/* 노드가 확인되는 경우 'sequence' 증가 및 해당 노드가 'Target' 여부 인지 확인 따라 반환 값 결정 */
+			this.sequence += 1;
 			
-			prioritys.clear();
+			if(node.processTarget == true)		// 'Target' 이 true 인 경우 반환으로 true 을 하며 아닌 경우 해당 반복문 내 코드 반복하면서 Queue 내 모든 노드를 추출하거나 혹은 추가로 발견할 때 까지 반복한다.
+				return true;
 			
-			executionBool = true;
+			System.out.println("현재 node.processTarget : " + node.processTarget + ", sequence : " + sequence);
 		}
 	}	
 }
 
-public class Solution {
+public class Solution_prototype {
 	
 	public static int solution(int[] priorities, int location) {
-		
-		QueueNode queue = new QueueNode();
-		HashMap<Integer, Integer> processCount = new HashMap<Integer, Integer>();
+        
+		Integer sequence = 0;		// 모든 우선 순위 Queue 내 실행 횟수를 공통적으로 저장 해야 되니 int 형 아닌 Integer 클래스 타입 사용.
+		HashMap<Integer, queueNode> prioritesQueue = new HashMap<Integer, queueNode>();
 		
 		/* 초기 작업 :
 		 * 
 		 * 1. HashMap 컬렉션 사용해서 priorities 내 각 프로세스 우선 순위 별 큐를 별도로 두어서 각 우선 순위 별 프로세스 들어 온 순서 별로 구현을 한다.
 		 * 2. HashMap 숫자 리스트를 관리하기 위해 각 배열 내 접근할 때에 동시에 연결리스트로서 생성한다. */
 		
-		for(int i = 0; i < priorities.length ; i ++) {
+		for(int i = priorities.length - 1; i >= 0 ; i --) {
 			
 			System.out.println("디버깅 - i : " + i + ", priorities[" + i + "] : " + priorities[i] + "\n");
 			
-			if(processCount.get(priorities[i]) == null)	// 연결 리스트로써 관리될 현재 프로세스의 우선순위에 해당하는 Queue 가 없으면 생성
-				processCount.put(priorities[i], 0);
+			if(prioritesQueue.get(priorities[i]) == null) {	// 연결 리스트로써 관리될 현재 프로세스의 우선순위에 해당하는 Queue 가 없으면 생성
+				
+				System.out.println("디버깅 - 새로운 Queue 생성, priorites[" + i + "] : " + priorities[i] + "\n");
+				prioritesQueue.put(priorities[i], new queueNode(priorities[i]));
+			}
 			
-			processCount.put(priorities[i], processCount.get(priorities[i]) + 1);
+			// 이미 Queue 가 존재 하거나 새롭게 생성 시 Node 삽입.
+			System.out.println("디버깅 - Queue 내 Node 삽입, priorites[" + i + "] : " + priorities[i]);
 			
 			Node node = null;
 			
@@ -199,36 +178,79 @@ public class Solution {
 			if(location ==  i) {		// 지정된 노드라면 매개변수 'Node.processTarget' 을 식별자로써 'true' 설정.
 				
 				System.out.println("디버깅 - location : " + location + ", i : " + i);
-				node = new Node(true, priorities[i]);
+				node = new Node(true);
 				
 			} else {					// 지정된 노드가 아니라면 매개변수 'Node.processTarget' 을 식별자로써 'false' 설정.
-				node = new Node(false, priorities[i]);
+				node = new Node(false);
 			}
 			
-			queue.enqueue(node);
+			prioritesQueue.get(priorities[i]).enqueue(node);
+		}
+		/* 각 queue 내 우선 순위 queue 따라 데이터 출력 및 현재 데이터 잘 들어갔나 확인하기 위한 keySet 재 구성 */
+		Set<Integer> keySet = new HashSet<>();
+		int [] keyList = null;
+	
+		for(int i = 0; i < priorities.length - 1 ; i++)		// HashMap 컬렉션 사용하여 중복 값 제거.
+			keySet.add(priorities[i]);
+	
+		keyList = new int[keySet.size()];
+		
+		int z = 0;
+		for(int keys : keySet) {
+			
+			keyList[z] = keys;
+			z++;
 		}
 		
-		/* queue 내 포함된 데이터 확인. */
-		queue.showqueue();
+		for(int i = 0; i < keyList.length - 1 ; i++)
+			for(int j = i + 1; j < keyList.length; j++)
+				if(keyList[i] < keyList[j]) {
+					
+					int temp = keyList[i];
+					keyList[i] = keyList[j];
+					keyList[j] = temp;
+				}
 		
+//		System.out.print("디버깅 - keyList : ");
+//		for(int i = 0; i< keyList.length; i++)
+//			System.out.print(keyList[i] + " ");
+//		System.out.println();
+		
+		/* 각 우선 순위 큐 별로 높은 우선순위를 가진 큐 부터 내부에 올바르게 연결 리스트로써 Queue 구성 되었는지 확인. */
+		System.out.println("각 Queue 우선 순위 별 실제로 저장된 데이터 확인.");
+		for(int i = 0; i < keyList.length; i++)
+			prioritesQueue.get(keyList[i]).showqueue();
+				
 		/* 실제 로직 : 각 우선 순위 높은 순서대로 Queue 를 호출하여 내부적으로 Queue 내 실제 프로세스 시작 및 시작한 순서 번호인 'sequence'를 적용하여 'Targer' 노드가 실행되는 순번을 저장. 시작. */
 		System.out.println("\n======= 실제 로직 시작 =====\n");
 		
-		queue.processExecution(processCount);
+		for(int prioritie : keyList) {
+			
+			System.out.println("반복 시작 지점.., prioritie : "  +  prioritie + " \n");
+			
+			if(prioritesQueue.get(prioritie).processExecution() == true) {	// 우선 순위 높은 Queue 순서대로 실행하면서 target 읆 만나면 즉시 종료하여 최종적으로 target이 실행되기 까지 횟수를 반환.
+				
+				sequence += prioritesQueue.get(prioritie).sequence;
+				break;
+			}
+			
+			else
+				sequence += prioritesQueue.get(prioritie).sequence;
+		}
 		
-		return queue.sequence;
+		return sequence;
     }
 
 	
 	public static void main(String[] args) {
 		
 		// 1번째 예제
-		int [] priorities = {2, 1, 3, 2};
-		int location = 2;
+//		int [] priorities = {2, 1, 3, 2};
+//		int location = 2;
 		
 		// 2번째 예제
-//		int [] priorities = {1, 1, 9, 1, 1, 1};
-//		int location = 0;
+		int [] priorities = {1, 1, 9, 1, 1, 1};
+		int location = 0;
 		
 		System.out.print("지정된 Priorites : ");
 		for(int i = 0; i < priorities.length; i++)
