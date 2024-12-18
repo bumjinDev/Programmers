@@ -1,35 +1,60 @@
 package Programmers.LevelOne.MemoriesScore;
 
-class Solution {
-	
+import java.util.HashMap;
+import java.util.Map;
 
-    public static int[] solution(String[] name, int[] yearning, String[][] photo) {
+class Solution {
+    public static int[]  solution(String[] name, int[] yearning, String[][] photo) {
        
     	int[] answer = new int[photo.length];
+        Map<String, Integer> nameYearning = new HashMap<>();
+    	
         
-        for(int i = 0; i<photo.length; i++) {
-        	for(int j = 0; j < photo[i].length; j++) {
+        /* 각 사람 이름 별 점수 초기화, 만약 점수가 없는 사람이라면 0으로 초기화 */
+    	int i = 0;
+    	
+    	System.out.println("nameYearning 초기화!");
+        for(; i < yearning.length; i ++) {	
+        	if(i >= yearning.length) {
         		
-        		int index = 0;
+        		nameYearning.put(name[i], 0);
+        		System.out.println("사람 이름 : " + name[i] + ", 점수 : " + yearning[i]);
+        	} else {
         		
-        		for(int z = 0; z < name.length; z++) {
-        			
-        			if( photo[i][z].equals(name[z])) {
-        				index = z;
-        				break;
-        			}
-        		}
-        	
-        		System.out.println("출력할 데이터 : " + yearning[index]);
-        		
-        		answer[i] += yearning[index];
-        		System.out.println("answer : " + answer[i]);
+        		nameYearning.put(name[i], yearning[i]);
+        		System.out.println("사람 이름 : " + name[i] + ", 점수 : " + yearning[i]);
         	}
+    	}
+        System.out.println("");
+        
+        int answerIndex = 0;
+        
+        /* String[][] photo 별 포함된 사람들의 총 그리움 점수 합산. */
+        for(String[] photos : photo) {
+        	
+        	System.out.println("\nanswerIndex : " + answerIndex + "\n");
+        	
+        	int resultValue = 0;
+        	for(int index = 0; index < photos.length; index ++) {
+        		
+        		System.out.println("photos[index] : " + photos[index]);
+        		System.out.println("nameYearning.get(photos[index])_value : " + nameYearning.get(photos[index]));
+        		
+        		if(nameYearning.get(photos[index]) == null)
+        			resultValue += 0;
+        		else
+        			resultValue += nameYearning.get(photos[index]);
+        		
+        		answer[answerIndex] = resultValue;
+        	}
+        	System.out.println("answer.get(" + answerIndex +") : " + answer[answerIndex] + "\n");;
+        	answerIndex += 1;
         }
         return answer;
     }
     
     public static void main(String[] args) {
+    	System.out.println("추억 점수 시작");
     	
 		/* 첫번재 예시 */
     	String [] name = {
@@ -61,9 +86,6 @@ class Solution {
 //    			{"kein", "deny", "may"},
 //    			{"kon", "coni"}};
     	
-    	int [] answer = solution(name, yearning, photo);
-    	
-    	for(int score : answer)
-    		System.out.println(score);
+    	solution(name, yearning, photo);
 	}
 }
